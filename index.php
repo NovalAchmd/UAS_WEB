@@ -3,8 +3,8 @@
 session_start();
 require_once 'config/config.php';
 
-// Fetch most recent posts
-$sql = "SELECT * FROM artikel ORDER BY tanggal_publikasi DESC LIMIT 5";
+// Fetch most recent posts, order by publication date and id
+$sql = "SELECT * FROM artikel ORDER BY tanggal_publikasi DESC, id DESC LIMIT 5";
 $result = $conn->query($sql);
 
 // Fetch trending posts
@@ -34,9 +34,9 @@ $trending_result = $conn->query($trending_sql);
             flex: 1;
         }
         .article-image {
-            width: 300px;
+            width: 259.55px; 
+            height: 216.8px;
             min-width: 300px;
-            height: 200px;
             overflow: hidden;
             border-radius: 8px;
         }
