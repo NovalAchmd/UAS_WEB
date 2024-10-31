@@ -24,7 +24,7 @@ if (isset($_GET['id'])) {
     $stmt->bind_param("i", $id);
 
     if ($stmt->execute()) {
-        $_SESSION['message'] = "Article deleted successfully";
+        $_SESSION['message'] = "Artikel Berhasil diHapus";
     } else {
         $_SESSION['message'] = "Error deleting article: " . $conn->error;
     }

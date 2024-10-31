@@ -3,8 +3,22 @@
 session_start();
 require_once 'config/config.php';
 
-// Fetch most recent posts, order by publication date and id
-$sql = "SELECT * FROM artikel ORDER BY tanggal_publikasi DESC, id DESC LIMIT 5";
+// Pagination setup
+$limit = 5; // Number of articles per page
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1; // Current page number
+$start = ($page - 1) * $limit; // Calculate the starting point for the query
+
+// Count total number of articles
+$count_sql = "SELECT COUNT(*) AS count FROM artikel";
+$count_result = $conn->query($count_sql);
+$count_row = $count_result->fetch_assoc();
+$total_articles = $count_row['count'];
+
+// Calculate total pages
+$total_pages = ceil($total_articles / $limit);
+
+// Fetch most recent posts with pagination
+$sql = "SELECT * FROM artikel ORDER BY tanggal_publikasi DESC, id DESC LIMIT $start, $limit";
 $result = $conn->query($sql);
 
 // Fetch trending posts
@@ -65,7 +79,7 @@ $trending_result = $conn->query($trending_sql);
         <div class="container pt-lg-5 pt-md-4">
             <div class="row">
                 <div class="col-lg-9 most-recent">
-                    <h3 class="section-title-left">Most Recent posts </h3>
+                    <h3 class="section-title-left">Most Recent posts</h3>
                     <div class="list-view">
                         <?php 
                         if($result->num_rows > 0) {
@@ -108,20 +122,34 @@ $trending_result = $conn->query($trending_sql);
                         ?>
                     </div>
 
+                    <!-- Pagination Navigation -->
                     <div class="pagination-wrapper mt-5">
                         <ul class="page-pagination">
-                            <li><span class="fa fa-angle-left"></span></li>
-                            <li><span aria-current="page" class="page-numbers current">1</span></li>
-                            <li><a class="page-numbers" href="#url">2</a></li>
-                            <li><a class="page-numbers" href="#url">3</a></li>
-                            <li><a class="next" href="#url"><span class="fa fa-angle-right"></span></a></li>
+                            <?php 
+                            // Previous page link
+                            if ($page > 1) {
+                                echo '<li><a href="?page=' . ($page - 1) . '"><span class="fa fa-angle-left"></span></a></li>';
+                            }
+
+                            // Page numbers
+                            for ($i = 1; $i <= $total_pages; $i++) {
+                                echo '<li><a href="?page=' . $i . '" ' . 
+                                     ($page == $i ? 'class="current"' : '') . 
+                                     '>' . $i . '</a></li>';
+                            }
+
+                            // Next page link
+                            if ($page < $total_pages) {
+                                echo '<li><a href="?page=' . ($page + 1) . '"><span class="fa fa-angle-right"></span></a></li>';
+                            }
+                            ?>
                         </ul>
                     </div>
                 </div>
 
                 <div class="col-lg-3 trending mt-lg-0 mt-5 mb-lg-5">
                     <div class="pos-sticky">
-                        <h3 class="section-title-left">Trending </h3>
+                        <h3 class="section-title-left">Trending</h3>
                         <?php 
                         if($trending_result->num_rows > 0) {
                             $counter = 1;
