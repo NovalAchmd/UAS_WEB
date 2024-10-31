@@ -137,3 +137,31 @@ table button:nth-child(2) {
     text-align: center;
     padding: 20px;
 }
+
+
+.sidebar nav a,
+.sidebar nav button {
+    display: block; /* Makes the anchor behave like a block element */
+    color: #ddd; /* Text color */
+    background: none; /* No background for the anchor */
+    border: none; /* No border for the button */
+    padding: 15px 20px; /* Padding for both */
+    text-align: left; /* Aligns text to the left */
+    cursor: pointer; /* Pointer cursor on hover */
+    font-size: 1em; /* Font size */
+    transition: background 0.3s; /* Smooth background transition */
+    text-decoration: none; 
+}
+
+/* Hover effect for both */
+.sidebar nav a:hover,
+.sidebar nav button:hover {
+    background-color: rgba(255, 255, 255, 0.1); /* Light background on hover */
+}
+
+/* Optional: If you want to maintain the button appearance */
+.sidebar nav button {
+    background-color: transparent; /* Make button background transparent */
+    border-radius: 5px; /* Rounded corners for button */
+}
+

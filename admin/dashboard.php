@@ -1,8 +1,7 @@
 <?php
 session_start();
-require_once '../config/config.php'; // Make sure this points to your database configuration file
+require_once '../config/config.php'; 
 
-// Fetch articles for manage-articles tab
 $sql = "SELECT * FROM artikel ORDER BY tanggal_publikasi DESC";
 $result = $conn->query($sql);
 ?>
@@ -20,8 +19,8 @@ $result = $conn->query($sql);
     <div class="sidebar">
         <h2>Blog Web</h2>
         <nav>
-            <button class="tab-button" onclick="showTab('tambah-artikel')">Tambah Artikel</button>
-            <button class="tab-button" onclick="showTab('manage-articles')">Manage Articles</button>
+            <a href="#1" class="tab-button" onclick="showTab('tambah-artikel')">Tambah Artikel</a>
+            <a href="#2" class="tab-button" onclick="showTab('melihat-artikel')">Melihat Artikel</a>
         </nav>
     </div>
 
@@ -31,8 +30,16 @@ $result = $conn->query($sql);
         </header>
         
         <!-- Tambah Artikel Tab -->
-        <div class="tab-content" id="tambah-artikel" style="display: block;">
+        <div class="tab-content" id="tambah-artikel" style="display: none;">
             <h2>Tambah Artikel</h2>
+            <?php if(isset($_SESSION['message'])): ?>
+                <div class="alert alert-info">
+                    <?php 
+                    echo $_SESSION['message']; 
+                    unset($_SESSION['message']);
+                    ?>
+                </div>
+            <?php endif; ?>
             <form class="article-form" action="create.php" method="POST" enctype="multipart/form-data">
                 <label>Title:</label>
                 <input type="text" name="judul" required>
@@ -60,7 +67,7 @@ $result = $conn->query($sql);
         </div>
 
         <!-- Manage Articles Tab -->
-        <div class="tab-content" id="manage-articles" style="display: none;">
+        <div class="tab-content" id="melihat-artikel" style="display: none;">
             <h2>Manage Articles</h2>
             <?php if(isset($_SESSION['message'])): ?>
                 <div class="alert alert-info">
@@ -108,12 +115,26 @@ $result = $conn->query($sql);
     </div>
 
     <script>
+        // Function to show the correct tab based on tabId
         function showTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(tab => {
                 tab.style.display = 'none';
             });
             document.getElementById(tabId).style.display = 'block';
         }
+
+        // Check the hash in the URL and show the appropriate tab
+        window.onload = function() {
+            const hash = window.location.hash;
+            if (hash === '#1') {
+                showTab('tambah-artikel');
+            } else if (hash === '#2') {
+                showTab('melihat-artikel');
+            } else {
+                // Default to showing the add article tab
+                showTab('tambah-artikel');
+            }
+        };
 
         function deleteArticle(id) {
             if(confirm('Are you sure you want to delete this article?')) {

@@ -72,6 +72,6 @@ if ($uploadOk == 0) {
 $conn->close();
 
 // Redirect back to the dashboard
-header("Location: dashboard.php");
+header("Location: dashboard.php#1");
 exit();
 ?>

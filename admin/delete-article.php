@@ -19,7 +19,7 @@ if (isset($_GET['id'])) {
         }
     }
 
-    // Delete the article from database
+    // Delete the article from the database
     $sql = "DELETE FROM artikel WHERE id = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $id);
@@ -36,7 +36,7 @@ if (isset($_GET['id'])) {
 // Always close the connection
 $conn->close();
 
-// Redirect to the manage articles page after deletion
-header("Location: manage-articles.php");
+// Redirect to the manage articles page after deletion with the hash #2
+header("Location: dashboard.php#2");
 exit();
 ?>
