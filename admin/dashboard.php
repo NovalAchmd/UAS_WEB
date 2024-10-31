@@ -32,11 +32,11 @@ $result = $conn->query($sql);
         <!-- Tambah Artikel Tab -->
         <div class="tab-content" id="tambah-artikel" style="display: none;">
             <h2>Tambah Artikel</h2>
-            <?php if(isset($_SESSION['message'])): ?>
+            <?php if(isset($_SESSION['message1'])): ?>
                 <div class="alert alert-info">
                     <?php 
-                    echo $_SESSION['message']; 
-                    unset($_SESSION['message']);
+                    echo $_SESSION['message1']; 
+                    unset($_SESSION['message1']);
                     ?>
                 </div>
             <?php endif; ?>
@@ -79,51 +79,56 @@ $result = $conn->query($sql);
             <?php endif; ?>
 
             <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>Title</th>
-                        <th>Category</th>
-                        <th>Author</th>
-                        <th>Publication Date</th>
-                        <th>Views</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php if($result->num_rows > 0): ?>
-                        <?php while($row = $result->fetch_assoc()): ?>
-                            <tr>
-                                <td><?php echo htmlspecialchars($row['judul']); ?></td>
-                                <td><?php echo htmlspecialchars($row['kategori']); ?></td>
-                                <td><?php echo htmlspecialchars($row['author']); ?></td>
-                                <td><?php echo date('Y-m-d', strtotime($row['tanggal_publikasi'])); ?></td>
-                                <td><?php echo $row['views'] ?? 0; ?></td>
-                                <td>
-                                    <a href="edit-article.php?id=<?php echo $row['id']; ?>" class="btn btn-sm btn-primary">Edit</a>
-                                    <button onclick="deleteArticle(<?php echo $row['id']; ?>)" class="btn btn-sm btn-danger">Delete</button>
-                                </td>
-                            </tr>
-                        <?php endwhile; ?>
-                    <?php else: ?>
+            <thead>
+                <tr>
+                    <th>Judul</th>
+                    <th>Kategori</th>
+                    <th>Author</th>
+                    <th>Tanggal Publikasi</th>
+                    <th>Foto</th>
+                    <th>Views</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php if($result->num_rows > 0): ?>
+                    <?php while($row = $result->fetch_assoc()): ?>
                         <tr>
-                            <td colspan="6" class="text-center">No articles found</td>
+                            <td><?php echo htmlspecialchars($row['judul']); ?></td>
+                            <td><?php echo htmlspecialchars($row['kategori']); ?></td>
+                            <td><?php echo htmlspecialchars($row['author']); ?></td>
+                            <td><?php echo date('Y-m-d', strtotime($row['tanggal_publikasi'])); ?></td>
+                            <td>
+                                <?php if (!empty($row['images']) && file_exists($row['images'])): ?>
+                                    <img src="<?php echo htmlspecialchars($row['images']); ?>" alt="Article Image" width="50" height="50">
+                                <?php else: ?>
+                                    <span>No image</span>
+                                <?php endif; ?>
+                            </td>
+                            <td><?php echo $row['views'] ?? 0; ?></td>
+                            <td>
+                                <a href="edit-article.php?id=<?php echo $row['id']; ?>" class="btn btn-sm btn-primary">Edit</a>
+                                <button onclick="deleteArticle(<?php echo $row['id']; ?>)" class="btn btn-sm btn-danger">Delete</button>
+                            </td>
                         </tr>
-                    <?php endif; ?>
-                </tbody>
+                    <?php endwhile; ?>
+                <?php else: ?>
+                    <tr>
+                        <td colspan="7" class="text-center">No articles found</td>
+                    </tr>
+                <?php endif; ?>
+            </tbody>
             </table>
         </div>
     </div>
 
     <script>
-        // Function to show the correct tab based on tabId
         function showTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(tab => {
                 tab.style.display = 'none';
             });
             document.getElementById(tabId).style.display = 'block';
         }
-
-        // Check the hash in the URL and show the appropriate tab
         window.onload = function() {
             const hash = window.location.hash;
             if (hash === '#1') {
@@ -131,7 +136,6 @@ $result = $conn->query($sql);
             } else if (hash === '#2') {
                 showTab('melihat-artikel');
             } else {
-                // Default to showing the add article tab
                 showTab('tambah-artikel');
             }
         };
