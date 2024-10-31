@@ -1,4 +1,4 @@
-<?php
+=<?php
 session_start();
 require_once '../config/config.php'; 
 
@@ -14,6 +14,26 @@ $result = $conn->query($sql);
     <title>Admin Dashboard</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <style>
+        .article-image {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+        .article-form {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #ddd;
+        }
+        .preview-image {
+            max-width: 200px;
+            max-height: 200px;
+            margin: 10px 0;
+            display: none;
+        }
+    </style>
 </head>
 <body>
     <div class="sidebar">
@@ -41,28 +61,41 @@ $result = $conn->query($sql);
                 </div>
             <?php endif; ?>
             <form class="article-form" action="create.php" method="POST" enctype="multipart/form-data">
-                <label>Title:</label>
-                <input type="text" name="judul" required>
+                <div class="mb-3">
+                    <label class="form-label">Judul:</label>
+                    <input type="text" class="form-control" name="judul" required>
+                </div>
 
-                <label>Content:</label>
-                <textarea name="isi" required></textarea>
+                <div class="mb-3">
+                    <label class="form-label">Isi:</label>
+                    <textarea class="form-control" name="isi" rows="6" required></textarea>
+                </div>
 
-                <label>Category:</label>
-                <select name="kategori">
-                    <option value="Technology">Technology</option>
-                    <option value="Lifestyle">Lifestyle</option>
-                </select>
+                <div class="mb-3">
+                    <label class="form-label">Kategori:</label>
+                    <select class="form-control" name="kategori">
+                        <option value="Technology">Technology</option>
+                        <option value="Lifestyle">Lifestyle</option>
+                    </select>
+                </div>
 
-                <label>Author:</label>
-                <input type="text" name="author" required>
+                <div class="mb-3">
+                    <label class="form-label">Author:</label>
+                    <input type="text" class="form-control" name="author" required>
+                </div>
 
-                <label>Publication Date:</label>
-                <input type="date" name="tanggal_publikasi" required>
+                <div class="mb-3">
+                    <label class="form-label">Tanggal Publikasi:</label>
+                    <input type="date" class="form-control" name="tanggal_publikasi" required>
+                </div>
 
-                <label>Image:</label>
-                <input type="file" name="fileToUpload" accept="image/*">
+                <div class="mb-3">
+                    <label class="form-label">Image:</label>
+                    <input type="file" class="form-control" name="fileToUpload" accept="image/*" onchange="previewImage(this)">
+                    <img id="preview" class="preview-image">
+                </div>
 
-                <button type="submit" name="submit">Save Article</button>
+                <button type="submit" class="btn btn-primary" name="submit">Save Article</button>
             </form>
         </div>
 
@@ -99,10 +132,10 @@ $result = $conn->query($sql);
                             <td><?php echo htmlspecialchars($row['author']); ?></td>
                             <td><?php echo date('Y-m-d', strtotime($row['tanggal_publikasi'])); ?></td>
                             <td>
-                                <?php if (!empty($row['images']) && file_exists($row['images'])): ?>
-                                    <img src="<?php echo htmlspecialchars($row['images']); ?>" alt="Article Image" width="50" height="50">
+                                <?php if (!empty($row['images'])): ?>
+                                    <img src="../<?php echo htmlspecialchars($row['images']); ?>" alt="Article Image" class="article-image">
                                 <?php else: ?>
-                                    <span>No image</span>
+                                    <img src="../assets/images/default.jpg" alt="Default Image" class="article-image">
                                 <?php endif; ?>
                             </td>
                             <td><?php echo $row['views'] ?? 0; ?></td>
@@ -129,6 +162,7 @@ $result = $conn->query($sql);
             });
             document.getElementById(tabId).style.display = 'block';
         }
+
         window.onload = function() {
             const hash = window.location.hash;
             if (hash === '#1') {
@@ -143,6 +177,18 @@ $result = $conn->query($sql);
         function deleteArticle(id) {
             if(confirm('Are you sure you want to delete this article?')) {
                 window.location.href = 'delete-article.php?id=' + id;
+            }
+        }
+
+        function previewImage(input) {
+            const preview = document.getElementById('preview');
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                }
+                reader.readAsDataURL(input.files[0]);
             }
         }
     </script>
